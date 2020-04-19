@@ -19,6 +19,7 @@ def read_data(normalize=True):
     dfDummies = pd.get_dummies(df_all['wd'], prefix = 'WD')
     if normalize:
         cols_to_norm = ['PM10','SO2','NO2','CO','O3','TEMP','PRES','DEWP','RAIN','WSPM']
+        print("Applied normalization on ",cols_to_norm )
         df_all[cols_to_norm] = df_all[cols_to_norm].apply(lambda x: (x - x.min()) / (x.max() - x.min()))
     df_all = pd.concat([df_all, dfDummies], axis=1)
     # Drop useless cols
