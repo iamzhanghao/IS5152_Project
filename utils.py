@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-def read_data(normalize=True):
+def read_data(normalize=True, keep_nan = False):
     dfs=[]
     count_per_station = 0
     for dirname, _, filenames in os.walk('data'):
@@ -14,7 +14,8 @@ def read_data(normalize=True):
     # Convert year month day to numerical values unit in hour
     df_all = df_all.rename(columns={"No": "time_stamp"})
     # Drop NA rows
-    df_all = df_all.dropna()
+    if not keep_nan:
+        df_all = df_all.dropna()
     ## One hot encoding for wind direction
     dfDummies = pd.get_dummies(df_all['wd'], prefix = 'WD')
     if normalize:
