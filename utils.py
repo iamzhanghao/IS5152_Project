@@ -27,3 +27,17 @@ def read_data(normalize=True):
     df_all = df_all.drop(columns=['No', 'year', 'month', 'day', 'hour', 'wd'])
     print("%d rows per station, total %d rows" % (count_per_station, df_all.shape[0]))
     return count_per_station, df_all
+
+def split_data(df):
+    # split data into trainng 90% and test 10%
+    # split training data into training set and validation set 80:20
+    total_data_count = len(df)
+    test_data_count = int(total_data_count*0.1)
+    train_data_count = int((total_data_count - test_data_count)*0.8)
+    validation_data_count = total_data_count - test_data_count - train_data_count
+
+    train_df = df[0: train_data_count]
+    validation_df = df[train_data_count : train_data_count + validation_data_count]
+    test_df = df[train_data_count + validation_data_count :]
+    print("Data is split into train, validation and test dataset successfully!")
+    return train_df, validation_df, test_df
