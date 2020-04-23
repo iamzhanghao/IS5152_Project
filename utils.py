@@ -45,3 +45,7 @@ def split_data(df):
     test_df = df[train_data_count + validation_data_count :]
     print("Data is split into train, validation and test dataset successfully!")
     return train_df, validation_df, test_df
+
+def prediction_accuracy(predict_value, true_value, tolerance):
+    diff = predict_value - true_value
+    return float(len(diff[abs(diff)<=tolerance])) / len(diff)
