@@ -14,6 +14,7 @@ def read_data(normalize=True, keep_nan = False, keep_dates=True):
     # Convert year month day to numerical values unit in hour
     if keep_dates:
         df_all['time_stamp'] = pd.to_datetime(df_all[["year", "month", "day"]])
+        df_all = df_all.drop(columns=['No'])
     else:
         df_all = df_all.rename(columns={"No": "time_stamp"})
     # Drop NA rows
@@ -27,7 +28,7 @@ def read_data(normalize=True, keep_nan = False, keep_dates=True):
         df_all[cols_to_norm] = df_all[cols_to_norm].apply(lambda x: (x - x.min()) / (x.max() - x.min()))
     df_all = pd.concat([df_all, dfDummies], axis=1)
     # Drop useless cols
-    df_all = df_all.drop(columns=['No','year', 'month', 'day', 'hour', 'wd'])
+    df_all = df_all.drop(columns=['year', 'month', 'day', 'hour', 'wd'])
     print("%d rows per station, total %d rows" % (count_per_station, df_all.shape[0]))
     return count_per_station, df_all
 
