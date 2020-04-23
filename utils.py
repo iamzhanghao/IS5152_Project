@@ -6,6 +6,7 @@ class Data():
     def __init__(self, train_val, test):
         self.train_val_df = train_val
         self.test_df = test
+        self.all_df = pd.concat([train_val,test],ignore_index=True)
 
 def read_data(normalize=True, keep_nan = False, keep_dates=True):
     train_dfs=[]
@@ -29,7 +30,7 @@ def read_data(normalize=True, keep_nan = False, keep_dates=True):
     
     df_all_train = pd.concat(train_dfs,ignore_index=True)
     df_all_test = pd.concat(test_dfs,ignore_index=True)
-    
+
     # For normalization use
     all_dfs = pd.concat([df_all_train,df_all_test],ignore_index=True)
 
@@ -72,3 +73,4 @@ if __name__ == '__main__':
     dataset = read_data()
     print(dataset.train_val_df.describe())
     print(dataset.test_df.describe())
+    print(dataset.all_df.describe())
