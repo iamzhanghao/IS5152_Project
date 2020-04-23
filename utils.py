@@ -3,16 +3,12 @@ import pandas as pd
 
 
 class Data():
-    def __init__(self, train, val, test):
-        self.train_df = train
-        self.val_df = val
+    def __init__(self, train_val, test):
+        self.train_val_df = train_val
         self.test_df = test
-
-
 
 def read_data(normalize=True, keep_nan = False, keep_dates=True):
     train_dfs=[]
-    val_dfs=[]
     test_dfs=[]
     count_per_station = 0
     for dirname, _, filenames in os.walk('data'):
@@ -23,22 +19,19 @@ def read_data(normalize=True, keep_nan = False, keep_dates=True):
             # 70:15:15 split ratio for Train, Val, Test
             count_per_station = df.shape[0]
             test_data_count = int(count_per_station*0.15)
-            validation_data_count = int(count_per_station*0.15)
-            train_data_count = count_per_station - test_data_count - validation_data_count
+            train_data_count = count_per_station - test_data_count 
 
             train_df = df[0: train_data_count]
-            validation_df = df[train_data_count : train_data_count + validation_data_count]
-            test_df = df[train_data_count + validation_data_count :]
+            test_df = df[train_data_count :]
             
             train_dfs.append(train_df)
-            val_dfs.append(validation_df)
             test_dfs.append(test_df)
     
     df_all_train = pd.concat(train_dfs,ignore_index=True)
-    df_all_val = pd.concat(val_dfs,ignore_index=True)
     df_all_test = pd.concat(test_dfs,ignore_index=True)
+    
     # For normalization use
-    all_dfs = pd.concat([df_all_train,df_all_val,df_all_test],ignore_index=True)
+    all_dfs = pd.concat([df_all_train,df_all_test],ignore_index=True)
 
     def transform_df(d):
         # Convert year month day to numerical values unit in hour
@@ -65,33 +58,17 @@ def read_data(normalize=True, keep_nan = False, keep_dates=True):
         return d
 
     df_all_train = transform_df(df_all_train)
-    df_all_val = transform_df(df_all_val)
     df_all_test = transform_df(df_all_test)
         
-    return Data(df_all_train,df_all_val,df_all_test)
+    return Data(df_all_train,df_all_test)
 
-# def split_data(df):
-#     split data into trainng 90% and test 10%
-#     split training data into training set and validation set 80:20
-#     total_data_count = len(df)
-#     test_data_count = int(total_data_count*0.1)
-#     train_data_count = int((total_data_count - test_data_count)*0.8)
-#     validation_data_count = total_data_count - test_data_count - train_data_count
-
-#     train_df = df[0: train_data_count]
-#     validation_df = df[train_data_count : train_data_count + validation_data_count]
-#     test_df = df[train_data_count + validation_data_count :]
-#     print("Data is split into train, validation and test dataset successfully!")
-#     return train_df, validation_df, test_df
 
 def prediction_accuracy(predict_value, true_value, tolerance):
     diff = predict_value - true_value
     return float(len(diff[abs(diff)<=tolerance])) / len(diff)
 
 
-
 if __name__ == '__main__':
     dataset = read_data()
-    print(dataset.train_df.describe())
-    print(dataset.val_df.describe())    
+    print(dataset.train_val_df.describe())
     print(dataset.test_df.describe())
