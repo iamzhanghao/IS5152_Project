@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-def read_data(normalize=True, keep_nan = False):
+def read_data(normalize=True, keep_nan = False, keep_dates=True):
     dfs=[]
     count_per_station = 0
     for dirname, _, filenames in os.walk('data'):
@@ -12,7 +12,10 @@ def read_data(normalize=True, keep_nan = False):
             dfs.append(df)
     df_all = pd.concat(dfs,ignore_index=True)
     # Convert year month day to numerical values unit in hour
-    df_all = df_all.rename(columns={"No": "time_stamp"})
+    if keep_dates:
+        df_all['time_stamp'] = pd.to_datetime(df_all[["year", "month", "day"]])
+    else:
+        df_all = df_all.rename(columns={"No": "time_stamp"})
     # Drop NA rows
     if not keep_nan:
         df_all = df_all.dropna()
@@ -24,7 +27,7 @@ def read_data(normalize=True, keep_nan = False):
         df_all[cols_to_norm] = df_all[cols_to_norm].apply(lambda x: (x - x.min()) / (x.max() - x.min()))
     df_all = pd.concat([df_all, dfDummies], axis=1)
     # Drop useless cols
-    df_all = df_all.drop(columns=['year', 'month', 'day', 'hour', 'wd'])
+    df_all = df_all.drop(columns=['No','year', 'month', 'day', 'hour', 'wd'])
     print("%d rows per station, total %d rows" % (count_per_station, df_all.shape[0]))
     return count_per_station, df_all
 
