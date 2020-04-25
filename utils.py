@@ -37,7 +37,7 @@ def read_data(normalize=True, keep_nan = False, keep_dates=True):
     def transform_df(d):
         # Convert year month day to numerical values unit in hour
         if keep_dates:
-            d['time_stamp'] = pd.to_datetime(d[["year", "month", "day"]])
+            d['time_stamp'] = pd.to_datetime(d[["year", "month", "day", "hour"]], format = "%Y-%m-%d %H")
             d = d.drop(columns=['No'])
         else:
             d = d.rename(columns={"No": "time_stamp"})
